@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Boot</title>
+</head>
+<body>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+        }
+        .chat-container {
+          width: 800px;
+          max-width: 800px;
+          height: 80vh;
+          background: #fff;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+        .chat-header {
+          background: #6a11cb;
+          padding: 10px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          color: #fff;
+        }
+        .chat-header .settings {
+          cursor: pointer;
+        }
+        .chat-messages {
+          flex: 1;
+          padding: 10px;
+          overflow-y: auto;
+        }
+        .chat-message {
+          display: flex;
+          align-items: flex-end;
+          margin-bottom: 10px;
+          animation: fadeIn 0.5s;
+        }
+        .chat-message.user {
+          flex-direction: row-reverse;
+        }
+        .chat-message .avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background-size: cover;
+          background-position: center;
+          margin: 0 10px;
+          position: relative;
+        }
+        .chat-message.user .avatar {
+          background-image: url("https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png");
+        }
+        .chat-message.ai .avatar {
+          background-image: url("https://thumbs.dreamstime.com/b/generative-ai-young-smiling-man-avatar-man-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-d-vector-people-279560903.jpg");
+        }
+        .chat-message .bubble {
+          max-width: 70%;
+          padding: 10px;
+          border-radius: 10px;
+          background: #f1f1f1;
+          position: relative;
+        }
+        .chat-message.user .bubble {
+          background: #6a11cb;
+          color: #fff;
+        }
+        .chat-message .bubble::after {
+          content: attr(data-timestamp);
+          display: block;
+          font-size: 10px;
+          color: #999;
+          margin-top: 5px;
+        }
+        .chat-input {
+          display: flex;
+          padding: 10px;
+          border-top: 1px solid #ddd;
+        }
+        .chat-input input {
+          flex: 1;
+          padding: 10px;
+          border: none;
+          border-radius: 20px;
+          background: #f1f1f1;
+          margin-right: 10px;
+        }
+        .chat-input button {
+          background: #6a11cb;
+          border: none;
+          padding: 10px;
+          border-radius: 50%;
+          color: #fff;
+          cursor: pointer;
+        }
+        .fab {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background: #6a11cb;
+          border: none;
+          padding: 15px;
+          border-radius: 50%;
+          color: #fff;
+          cursor: pointer;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @media (max-width: 600px) {
+          .chat-container {
+            width: 100%;
+            height: 100vh;
+            border-radius: 0;
+          }
+          .chat-input input {
+            margin-right: 5px;
+          }
+          .chat-input button {
+            padding: 8px;
+          }
+          .fab {
+            bottom: 10px;
+            right: 10px;
+            padding: 10px;
+          }
+        }
+      </style>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      />
+      <div class="chat-container">
+        <div class="chat-header">
+          <div>Chat Boot v1.1 </div>
+          <div class="settings"><i class="fas fa-cog"></i></div>
+        </div>
+        <div class="chat-messages">
+          <!-- Chat messages will be dynamically added here -->
+        </div>
+        <div class="chat-input">
+          <input type="text" placeholder="Type a message..." />
+          <button><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+      <button class="fab"><i class="fas fa-plus"></i></button>
+      
+      <script>
+        // JavaScript to handle animations, sound effects, and dynamic content
+        document
+          .querySelector(".chat-input button")
+          .addEventListener("click", sendMessage);
+        document
+          .querySelector(".chat-input input")
+          .addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+              sendMessage();
+            }
+          });
+      
+        let chatHistory = [];
+      
+        async function sendMessage() {
+          const input = document.querySelector(".chat-input input");
+          const message = input.value;
+          const token = ""; // Use the token from the template data
+      
+          if (message.trim()) {
+            addMessage("user", message);
+            chatHistory.push(`user: ${message}`);
+            input.value = "";
+            const riwayat = chatHistory.join(" ");
+            // Prepare the request body
+            const requestBody = {
+              message: message,
+              riwayat: riwayat,
+            };
+            const response = await fetch(
+              `/generate?promt=${message}&riwayat${riwayat}`,
+              {
+                method: "GET",
+              }
+            );
+            const data = await response.json();
+            addMessage("ai", data.payload.response);
+            chatHistory.push(`ai: ${data.payload.response}`);
+          }
+        }
+      
+        function addMessage(sender, text) {
+          const messagesContainer = document.querySelector(".chat-messages");
+          const messageElement = document.createElement("div");
+          messageElement.classList.add("chat-message", sender);
+          messageElement.innerHTML = `
+                      <div class="avatar"></div>
+                      <div class="bubble" data-timestamp="${new Date().toLocaleTimeString()}">${text}</div>
+                  `;
+          messagesContainer.appendChild(messageElement);
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+      </script>
+</body>
+</html>
