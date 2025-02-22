@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
-
+import markdown
 app = Flask(__name__)
 
 class BootConfig():
@@ -36,6 +36,8 @@ def generate():
     '''
     chat_config = BootConfig()
     response = chat_config.get_response(new_promt)
+    response = markdown.markdown(response)
+
     data = {
         'payload':{
             'response':response
