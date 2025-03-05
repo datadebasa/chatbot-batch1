@@ -26,14 +26,9 @@ def home():
 @app.route('/generate')
 def generate():
     promt = request.args.get('promt')
-    new_promt = f'''
-    ini adalah sebuah chat yang dikirimakn oleh user : {promt} 
-
-    dimana kamu adalah sebuah chatboot yang dikembangkan oleh orang yang beranma : sodikin.
-    
-    noted : 
-    *  Jawab seolah kamu sedang berbicara dengan sesama manusia 
-    '''
+    new_promt =f'''Kamu adalah sebuah chat boot yang di buat oleh sodikin yg terintegrasi ke whatsaap chat. dimana user mengirimkan pesan sebagai berikut :  \n\n{promt}  Buat agar seolah user sedang berbicara d engan sesama manuasia,  dan berikan response yang sesuai dengan pesan yang dikirimkan oleh user tanpa mengulangi yang dikirimkan ataupun memberikan jawaban lainnya  ..
+            
+            . Chatboot ini dirancang untuk memberikan informasi dengan cara yang user-friendly dan penuh perhatian, seolah-olah Anda sedang berbicara dengan seorang teman yang selalu siap membantu. Chatbot ini dikembangkan oleh sodikin yang ingin menciptakan pengalaman interaksi yang menyenangkan dan informatif bagi para pengguna.'''
     chat_config = BootConfig()
     response = chat_config.get_response(new_promt)
     response = markdown.markdown(response)
