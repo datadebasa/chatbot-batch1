@@ -6,7 +6,7 @@ app = Flask(__name__)
 class BootConfig():
     def __init__(self):
         self._tokoen = 'AIzaSyB9b3WkouyhF_kyhXBZwP3yZPN-M0ilzBI'
-        self._model = genai.GenerativeModel('gemini-1.5-flash')
+        self._model = genai.GenerativeModel('gemini-2.5-flash')
     
     def get_response(self, promt):
         genai.configure(api_key=self._tokoen)
